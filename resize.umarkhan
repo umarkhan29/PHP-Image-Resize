@@ -1,0 +1,53 @@
+<?php
+	$extenstion="";
+	if(isset($_POST['path'])){
+	
+		$imgheight=$_POST['height'];
+		$imgwidth=$_POST['width'];
+		$filenamecopmopents=explode('.',$_POST['path']);
+		$FileExtension=count($filenamecopmopents);
+		$extenstion=strtolower($filenamecopmopents[($FileExtension-1)]);
+		
+		if($extenstion == "jpg"|| $extenstion =="jpeg"||$extenstion =="png" ){
+			
+			
+			$image=trim(strip_tags(stripslashes($_POST['path'])));
+			
+			if($extenstion == "png"){
+					header('content-type: image/png');								
+			}elseif($extenstion == "jpg"){
+				header('content-type: image/jpeg');								
+			}
+		
+			$image_size=getimagesize($image);
+			
+			$image_width=$image_size[0];
+			$image_height=$image_size[1];
+			$new_width=$imgheight;
+			$new_height=$imgwidth;
+			
+			
+			$new_image=imagecreatetruecolor($new_width,$new_height);
+			if($extenstion == "png"){
+					$old_image=imagecreatefrompng($image);											
+			}elseif($extenstion == "jpg"){
+							$old_image=imagecreatefromjpeg($image);					
+			}
+			
+			imagecopyresized($new_image,$old_image,0,0,0,0,$new_width,$new_height,$image_width,$image_height);
+			if($extenstion == "png"){
+					imagepng($new_image,$image);										
+			}elseif($extenstion == "jpg"){
+						imagejpeg($new_image,$image);							
+			}
+			
+			header('location:resize.php?status=success');
+			
+		}
+		else{
+				echo "Unsupported Format";
+			}
+		
+	}
+
+?>
